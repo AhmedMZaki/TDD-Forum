@@ -20,11 +20,19 @@ class ThreadsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($channelSlug = null)
     {
-        $threads = Thread::orderBy('created_at','desc')->paginate(10);
+        if ($channelSlug)
+        {
+            $channelId = Channel::where('slug',$channelSlug)->first()->id;
+            $threads = Thread::where('channel_id',$channelId)->latest()->paginate(10);
+        } else {
+            $threads = Thread::orderBy('created_at','desc')->paginate(10);
+        }
+
         return view('threads.index',compact('threads'));
     }
+
 
     /**
      * Show the form for creating a new resource.

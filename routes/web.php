@@ -19,8 +19,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::resource('threads','ThreadsController');
+Route::get('/threads/{channel}','ThreadsController@index');
+Route::resource('/threads','ThreadsController');
 
 Route::get('/threads/{channel}/{thread}','ThreadsController@show');
 
@@ -28,3 +28,5 @@ Route::post('/threads/{channel}/{thread}/reply',[
     'uses' => 'RepliesController@addReply',
     'as' => 'threads.addReply',
 ]);
+
+
