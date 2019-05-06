@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Channel;
 use Auth;
 use App\Thread;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ class ThreadsController extends Controller
      */
     public function create()
     {
-        return view('threads.create');
+        $channels = Channel::all();
+        return view('threads.create',compact('channels'));
     }
 
     /**
@@ -51,12 +53,13 @@ class ThreadsController extends Controller
 
          $thread = Thread::create([
              'user_id' => auth()->id(),
-             'channel_id' => 1,
+             'channel_id' => $request['channel_id'],
              'title' => $request['title'],
              'body' => $request['body'],
         ]);
+         $channelName = Channel::where('id',$request['channel_id'])->first()->name;
         Session(['success'=>'thread created Successfully']);
-         return redirect()->route('threads.show',['id'=>$thread->id]);
+         return redirect('/threads/'.$channelName.'/'.$thread->id);
     }
 
     /**
@@ -78,7 +81,8 @@ class ThreadsController extends Controller
      */
     public function edit(Thread $thread)
     {
-        return view('threads.edit',compact('thread'));
+        $channels = Channel::all();
+        return view('threads.edit',compact('channels','thread'));
     }
 
     /**
@@ -93,13 +97,15 @@ class ThreadsController extends Controller
         $request->validate([
             'title' => 'required|min:2',
             'body' => 'required|min:1',
+            'channel_id' => 'required|exists:channels,id',
         ]);
 
         $thread->title = $request['title'];
         $thread->body = $request['body'];
         $thread->save();
-        Session(['success'=>'thread updated Successfully']);
-        return redirect()->route('threads.show',['id'=>$thread->id]);
+        $channelName = Channel::where('id',$request['channel_id'])->first()->name;
+        Session(['info'=>'thread updated Successfully']);
+        return redirect('/threads/'.$channelName.'/'.$thread->id);
     }
 
     /**

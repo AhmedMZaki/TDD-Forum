@@ -24,6 +24,15 @@
                                 <input type="text" class="form-control" name="title" placeholder="Thread title" required value="{{$thread->title}}">
                             </div>
                             <div class="form-group">
+                                <select class="form-control" id="channel_id" name="channel_id">
+                                    @foreach($channels as $channel)
+                                        <option value="{{$channel->id}}">
+                                            {{$channel->name}}
+                                        </option>
+                                        @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <lable for="body">
                                     Thread Body
                                 </lable>
